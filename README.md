@@ -1,14 +1,12 @@
-<div align="center" style="background-color: #F8EFF5; padding: 24px 25px; border-radius: 16px; color: #57354D;">
+<div align="center">
 
-  <p style="color: #946580; margin-bottom: 12px;"> · · · PLANIFICADOR DE TAREAS · · · </p>
+<sub>· · · PLANIFICADOR DE TAREAS · · ·</sub>
 
-  <h1 style="color: #57354D; margin-bottom: 12px;">MI ESPACIO, MIS REGLAS ᝰ.ᐟ</h1>
+### MI ESPACIO, MIS REGLAS ᝰ.ᐟ
 
-  <h3 style="color: #705D6A; margin-top: 0; margin-bottom: 22px;">Organiza tu vida a tu manera.</h3>
+### Organiza tu vida a tu manera.
 
-  <hr width="70%" style="border-color: #DEC8D8;">
-
-  <p style="color: #946580; margin-top: 22px; margin-bottom: 4px;"><em>Un espacio que se adapta a ti, no tú a él.</em></p>
+*Un espacio que se adapta a ti, no tú a él.*
 
 </div>
 
@@ -32,23 +30,33 @@ La idea parte de una premisa: cada persona tiene sus propios gustos, prioridades
 
 ## 🔎 Funcionalidades
 
-Las funcionalidades se desarrollarán progresivamente durante los diferentes sprints del proyecto.
+### Idea general
 
-### Sprint 1 · Interfaz inicial
+| Sección | Descripción |
+|---|---|
+| 🗂️ **Menú lateral** | Menú colapsable que funciona como filtro de vistas: Mi planificador, Mi día, Calendario, Todas mis tareas y Personalizar mi espacio |
+| 💬 **Frase del planificador** | Frase motivacional propia o aleatoria, configurable desde el menú |
+| 📅 **Calendario** | Resumen mensual de tareas con indicadores de prioridad |
+| ✅ **To-do-list del día** | Checklist de las tareas de hoy con hora, prioridad y categoría |
+| ➕ **Agregar tarea** | Título, notas, fecha, hora, categoría y prioridad |
+| 📋 **Lista de tareas** | Todas las tareas con filtros (todas, pendientes y completadas), edición y eliminación |
+| 🎨 **Personalización** | Temas y colores, nombre de usuario, avatar y orden de las secciones |
 
-- ✅ Construcción de la estructura principal de la interfaz con formulario para registrar tareas.
+### Etiquetas
+
+- **Categorías:** Trabajo, Personal, Estudio, Salud y Ocio.
+- **Prioridades:** Alta 🔴, Media 🟡 y Baja 🟢. La prioridad se identifica con un color en todas las vistas.
+
+## ✅ Desarrollo
+
+- [ ] Construcción de la estructura principal de la interfaz con formulario para registrar tareas.
 - [ ] Componente visual para representar cada tarea.
 - [ ] Validación de los datos del formulario.
-
-### Próximas etapas
-
 - [ ] Implementación de operaciones CRUD.
 - [ ] Consumo e integración de APIs.
 - [ ] Desarrollo del backend y conexión con el frontend.
 - [ ] Persistencia de datos mediante una base de datos SQL.
 - [ ] Opciones de personalización del espacio.
-
-*Esta lista se actualizará a medida que avance el desarrollo.*
 
 ## 💻 Tecnologías
 
@@ -76,9 +84,7 @@ Planificador-Tareas/
 ├── index.html
 └── README.md
 ```
-
 La estructura se ampliará conforme se incorporen nuevas funcionalidades.
-
 
 ## 📌 Estado del proyecto
 
@@ -94,5 +100,15 @@ Estudiante de desarrollo Junior Full Stack.
 Proyecto desarrollado como parte del proceso de aprendizaje y aplicación de conocimientos en desarrollo web.
 
 ---
+
+## 🔗 Enlaces
+
+| Recurso | Enlace |
+|---|---|
+| 🎨 Wireframe en Figma | [Ver diseño](https://www.figma.com/design/NBAKDwSuG5ZOcDr4xcTF5g/Planificador-de-tareas?m=auto&t=jQvvDn0rsY7660Cd-1) |
+| 📌 Tablero en Trello | [Ver tablero](https://trello.com/b/oPjosCUa/planificador-de-tareas-%F0%96%B9%AD) |
+
+---
+
 
 <p align="center">Diseño regido por el principio de: <em>Mi espacio, mis reglas. Una forma de organizar el mundo a mi manera. ✿</em></p>

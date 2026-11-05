@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi planificador de tareas</title>
+
+    <!-- Tipografías de Google Fonts -->
+
+    <!-- CSS de Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- Iconos de Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- CSS propio -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- Contenedor principal con d-flex para permitir el empuje horizontal al abrir el menú -->
+    <div class="d-flex min-vh-100">
+
+        <!-- ///// MENÚ LATERAL ///// -->
+        <!-- Inicia CERRADO (sin la clase "show") para que primero se vea el botón de hamburguesa en el header -->
+        <nav id="menuLateral" class="collapse collapse-horizontal bg-white border-end p-3" style="width: 260px;"
+            aria-label="Menú principal">
+            <!-- Contenedor interno fijo para evitar saltos de texto durante la animación -->
+            <div class="d-flex flex-column h-100" style="width: 226px;">
+
+                <!-- Fila superior del menú: Botón para cerrar + Título -->
+                <div class="d-flex align-items-center gap-2 mb-4 py-1">
+                    <!-- BOTÓN INTERNO: Solo existe y se ve cuando la barra está abierta -->
+                    <button
+                        class="btn btn-sm bg-transparent text-secondary p-1 d-flex align-items-center justify-content-center border-0"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#menuLateral, #contenedorBotonHamburguesa, #espaciadorMain"
+                        aria-expanded="false" aria-controls="menuLateral contenedorBotonHamburguesa espaciadorMain"
+                        title="Cerrar menú" aria-label="Cerrar menú">
+                        <i class="bi bi-layout-sidebar fs-5"></i>
+                    </button>
+
+                    <h2 class="h5 text-primary fw-bold mb-0">Mi espacio</h2>
+                </div>
+
+                <!-- ///// OPCIONES DEL MENÚ (FILTROS DE VISTAS) ///// -->
+                <div class="nav nav-pills flex-column gap-1 flex-grow-1" id="vistas-tab" role="tablist"
+                    aria-orientation="vertical">
+
+                    <!-- Filtro 1: Mi Planificador (Todos los elementos) -->
+                    <button class="nav-link text-start text-dark active border-0" id="tab-planificador"
+                        data-bs-toggle="tab" data-bs-target="#vistaPlanificador" type="button" role="tab"
+                        aria-controls="vistaPlanificador" aria-selected="true">
+                        Mi planificador
+                    </button>
+
+                    <!-- Filtro 2: Mi Día (To-do list del día) -->
+                    <button class="nav-link text-start text-dark border-0" id="tab-midia" data-bs-toggle="tab"
+                        data-bs-target="#vistaMiDia" type="button" role="tab" aria-controls="vistaMiDia"
+                        aria-selected="false">
+                        Mi día
+                    </button>
+
+                    <!-- Filtro 3: Calendario (Calendario actualizado con tareas) -->
+                    <button class="nav-link text-start text-dark border-0" id="tab-calendario" data-bs-toggle="tab"
+                        data-bs-target="#vistaCalendario" type="button" role="tab" aria-controls="vistaCalendario"
+                        aria-selected="false">
+                        Calendario
+                    </button>
+
+                    <!-- Filtro 4: Todas mis tareas (Agregar tarea y lista completa) -->
+                    <button class="nav-link text-start text-dark border-0" id="tab-todas" data-bs-toggle="tab"
+                        data-bs-target="#vistaTodasTareas" type="button" role="tab" aria-controls="vistaTodasTareas"
+                        aria-selected="false">
+                        Todas mis tareas
+                    </button>
+
+                    <!-- Filtro 5: Personalizar mi espacio (Editar perfil, temas, frase y orden) -->
+                    <div class="mt-4 pt-3 border-top" role="presentation">
+                        <button class="nav-link text-start text-dark border-0 w-100" id="tab-personalizar"
+                            data-bs-toggle="tab" data-bs-target="#vistaPersonalizar" type="button" role="tab"
+                            aria-controls="vistaPersonalizar" aria-selected="false">
+                            Personalizar mi espacio
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sección que muestra el tema actual -->
+                <div class="mb-3 pt-3 border-top text-secondary small px-3">
+                    <div class="mb-2">Tema actual</div>
+                    <div id="nombreTemaActual" class="text-dark">Predeterminado</div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Contenedor de contenido de la vista principal -->
+        <div class="flex-grow-1 d-flex flex-column overflow-x-hidden">
+
+            <!-- ///// ENCABEZADO (HEADER) ///// -->
+            <header class="navbar navbar-expand bg-white border-bottom px-4 py-3">
+                <div class="container-fluid p-0 d-flex justify-content-between align-items-center">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <!-- CONTENEDOR DEL BOTÓN HAMBURGUESA EXTERNO -->
+                        <!-- Inicia VISIBLE (con la clase "show") porque el menú empieza cerrado -->
+                        <div id="contenedorBotonHamburguesa" class="collapse collapse-horizontal show">
+                            <!-- BOTÓN EXTERNO: Al presionarlo, abre el menú y oculta este mismo contenedor -->
+                            <button
+                                class="btn btn-sm bg-transparent text-secondary p-1 d-flex align-items-center justify-content-center border-0"
+                                type="button" data-bs-toggle="collapse"
+                                data-bs-target="#menuLateral, #contenedorBotonHamburguesa, #espaciadorMain"
+                                aria-expanded="true"
+                                aria-controls="menuLateral contenedorBotonHamburguesa espaciadorMain" title="Abrir menú"
+                                aria-label="Abrir menú">
+                                <i class="bi bi-list fs-4"></i>
+                            </button>
+                        </div>
+
+                        <!-- Logo y nombre del planificador -->
+                        <h1 class="navbar-brand d-flex align-items-center gap-2 m-0 fw-bold text-dark">
+                            <img src="img/logo-plann.png" alt="Logo Mi planificador" width="40" height="40"
+                                class="d-inline-block object-fit-contain">
+                            <span>Mi planificador de tareas</span>
+                        </h1>
+                    </div>
+
+                    <!-- Avatar y usuario -->
+                    <div class="d-flex align-items-center gap-2 me-md-5">
+                        <span class="fs-3 text-secondary d-flex align-items-center" aria-hidden="true">
+                            <i class="bi bi-person-circle"></i>
+                        </span>
+                        <span class="text-secondary small d-none d-sm-inline">Usuario</span>
+                    </div>
+
+                </div>
+            </header>
+
+            <!-- ///// CONTENIDO EN MAIN  ///// -->
+            <main class="p-4 flex-grow-1">
+
+                <!-- Fila: espaciador (se colapsa con el menú) + contenido -->
+                <div class="d-flex">
+
+                    <!-- ESPACIADOR: se colapsa junto con el menú para que el contenido siga alineado con el logo -->
+                    <div id="espaciadorMain" class="collapse collapse-horizontal show" aria-hidden="true">
+                        <div class="d-none d-md-block" style="width: 4rem"></div>
+                    </div>
+
+                    <!-- CONTENIDO -->
+                    <div class="flex-grow-1 pe-md-5 overflow-hidden">
+
+                        <!-- .tab-content agrupa las vistas del menú; cada .tab-pane es una vista -->
+                        <div class="tab-content" id="vistas-contenido">
+
+                            <!-- ///// VISTA: MI PLANIFICADOR (vista predeterminada) ///// -->
+                            <!-- "show active" = es la vista visible al cargar la página -->
+                            <div class="tab-pane fade show active" id="vistaPlanificador" role="tabpanel"
+                                aria-labelledby="tab-planificador" tabindex="0">
+
+                                <!-- ///// 1. FRASE DEL PLANIFICADOR ///// -->
+                                <!-- mb-4 = mismo espacio de separación que tiene el .row de abajo, así todo queda parejo -->
+                                <section class="mb-4" aria-label="Frase del planificador">
+
+                                    <!-- <figure> + <blockquote> es la forma semántica de mostrar una cita o frase -->
+                                    <!-- card + card-body = misma tarjeta que usan el calendario y el to-do, para que se vea consistente -->
+                                    <!-- mb-0 quita el margen por defecto que trae <figure> -->
+                                    <figure class="card mb-0">
+                                        <!-- d-flex + align-items-center = ícono y frase en la misma línea, centrados verticalmente -->
+                                        <!-- gap-3 = espacio entre el ícono y la frase -->
+                                        <div class="card-body d-flex align-items-center gap-3">
+
+                                            <!-- Ícono de comillas -->
+                                            <i class="bi bi-chat-square-quote fs-3 text-secondary"
+                                                aria-hidden="true"></i>
+
+                                            <!-- mb-0 quita el margen inferior del blockquote -->
+                                            <blockquote class="mb-0 text-secondary fst-italic">
+                                                <p class="mb-0">"Pequeños pasos también son grandes avances"</p>
+                                            </blockquote>
+                                        </div>
+                                    </figure>
+                                </section>
+
+                                <!-- ///// 2. CALENDARIO + TO-DO DEL DÍA ///// -->
+                                <!-- .row crea la fila; g-4 = separación entre columnas; mb-4 = espacio debajo -->
+                                <div class="row g-4 mb-4">
+
+                                    <!-- ----- CALENDARIO ----- -->
+                                    <!-- col-12 = ancho completo en celular. col-lg-5 = 5 de 12 columnas desde pantallas grandes -->
+                                    <section class="col-12 col-lg-5" aria-labelledby="titulo-calendario">
+
+                                        <!-- ESPACIO DONDE VA A IR EL CALENDARIO -->
+                                        <!-- bg-body-secondary = fondo gris claro. border rounded = borde redondeado -->
+                                        <!-- d-flex + align-items-center + justify-content-center = centra el texto -->
+                                        <!-- min-height evita que el espacio se colapse porque no tiene contenido -->
+                                        <div class="bg-body-secondary border rounded d-flex align-items-center justify-content-center"
+                                            style="min-height: 320px;">
+                                            <h2 id="titulo-calendario" class="h5 text-secondary mb-0">Calendario</h2>
+                                        </div>
+
+                                    </section>
+
+                                    <!-- ///// TO-DO LIST DEL DÍA ///// -->
+                                    <!-- NOTA: cuando el calendario sea real, igualar la altura de esta tarjeta con la del calendario -->
+                                    <!-- col-lg-7 + el col-lg-5 del calendario = 12 columnas, quedan lado a lado en desktop -->
+                                    <section class="col-12 col-lg-7" aria-labelledby="titulo-midia">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+
+                                                <!-- Encabezado: título a la izquierda, contador a la derecha -->
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <h2 id="titulo-midia" class="h6 fw-bold mb-0">
+                                                        <i class="bi bi-check2-square text-primary me-2"
+                                                            aria-hidden="true"></i>To-do-list del día
+                                                    </h2>
+                                                    <!-- Contador: hechas / total. Después JS lo actualizará -->
+                                                    <span class="small text-secondary">3/5<span class="visually-hidden">
+                                                            tareas completadas</span></span>
+                                                </div>
+
+                                                <!-- overflow-y-auto = aparece scroll vertical solo cuando el contenido no cabe -->
+                                                <!-- max-height limita hasta dónde crece la lista; después de eso, hace scroll -->
+                                                <ul class="list-group list-group-flush overflow-y-auto"
+                                                    style="max-height: 250px;">
+
+                                                    <!-- TAREA COMPLETADA: el título lleva text-decoration-line-through (tachado) -->
+                                                    <li class="list-group-item d-flex align-items-center gap-3">
+                                                        <!-- Check -->
+                                                        <input class="form-check-input mt-0" type="checkbox" id="dia-1"
+                                                            checked>
+                                                        <!-- Hora -->
+                                                        <time class="small text-secondary" datetime="08:00">08:00</time>
+                                                        <!-- Círculo de prioridad: rojo = alta -->
+                                                        <span class="d-inline-block p-2 rounded-circle bg-danger">
+                                                            <span class="visually-hidden">Prioridad alta</span>
+                                                        </span>
+                                                        <!-- Título: flex-grow-1 lo estira y empuja la etiqueta a la derecha -->
+                                                        <label
+                                                            class="flex-grow-1 text-decoration-line-through text-secondary"
+                                                            for="dia-1">
+                                                            Meditar y hacer ejercicio
+                                                        </label>
+                                                        <!-- Etiqueta de categoría -->
+                                                        <span
+                                                            class="badge bg-success-subtle text-success-emphasis">Salud</span>
+                                                    </li>
+
+                                                    <li class="list-group-item d-flex align-items-center gap-3">
+                                                        <input class="form-check-input mt-0" type="checkbox" id="dia-2"
+                                                            checked>
+                                                        <time class="small text-secondary" datetime="10:00">10:00</time>
+                                                        <!-- amarillo = media -->
+                                                        <span class="d-inline-block p-2 rounded-circle bg-warning">
+                                                            <span class="visually-hidden">Prioridad media</span>
+                                                        </span>
+                                                        <label
+                                                            class="flex-grow-1 text-decoration-line-through text-secondary"
+                                                            for="dia-2">
+                                                            Clase de diseño web
+                                                        </label>
+                                                        <span
+                                                            class="badge bg-primary-subtle text-primary-emphasis">Estudio</span>
+                                                    </li>
+
+                                                    <li class="list-group-item d-flex align-items-center gap-3">
+                                                        <input class="form-check-input mt-0" type="checkbox" id="dia-3"
+                                                            checked>
+                                                        <time class="small text-secondary" datetime="12:30">12:30</time>
+                                                        <!-- verde = baja -->
+                                                        <span class="d-inline-block p-2 rounded-circle bg-success">
+                                                            <span class="visually-hidden">Prioridad baja</span>
+                                                        </span>
+                                                        <label
+                                                            class="flex-grow-1 text-decoration-line-through text-secondary"
+                                                            for="dia-3">
+                                                            Almuerzo con amigos
+                                                        </label>
+                                                        <span
+                                                            class="badge bg-secondary-subtle text-secondary-emphasis">Personal</span>
+                                                    </li>
+
+                                                    <!-- TAREAS PENDIENTES: sin "checked" y sin las clases de tachado -->
+                                                    <li class="list-group-item d-flex align-items-center gap-3">
+                                                        <input class="form-check-input mt-0" type="checkbox" id="dia-4">
+                                                        <time class="small text-secondary" datetime="15:00">15:00</time>
+                                                        <span class="d-inline-block p-2 rounded-circle bg-danger">
+                                                            <span class="visually-hidden">Prioridad alta</span>
+                                                        </span>
+                                                        <label class="flex-grow-1" for="dia-4">Estudiar
+                                                            JavaScript</label>
+                                                        <span
+                                                            class="badge bg-primary-subtle text-primary-emphasis">Estudio</span>
+                                                    </li>
+
+                                                    <li class="list-group-item d-flex align-items-center gap-3">
+                                                        <input class="form-check-input mt-0" type="checkbox" id="dia-5">
+                                                        <time class="small text-secondary" datetime="19:00">19:00</time>
+                                                        <span class="d-inline-block p-2 rounded-circle bg-success">
+                                                            <span class="visually-hidden">Prioridad baja</span>
+                                                        </span>
+                                                        <label class="flex-grow-1" for="dia-5">Leer un libro</label>
+                                                        <span
+                                                            class="badge bg-warning-subtle text-warning-emphasis">Ocio</span>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                </div>
+
+                                <!-- ///// 3. AGREGAR NUEVA TAREA ///// -->
+                                <section class="mb-4" aria-labelledby="titulo-agregar">
+                                    <div class="card">
+                                        <div class="card-body">
+
+                                            <!-- Título a la izquierda -->
+                                            <h2 id="titulo-agregar" class="h6 fw-bold mb-3">
+                                                <i class="bi bi-plus-circle-fill text-primary me-2"
+                                                    aria-hidden="true"></i>Agregar nueva tarea
+                                            </h2>
+
+                                            <!-- FORMULARIO -->
+                                            <form id="formTarea">
+                                                <div class="row g-2">
+
+                                                    <!-- LADO IZQUIERDO: título y notas -->
+                                                    <div class="col-12 col-lg-6 d-flex flex-column gap-2">
+
+                                                        <!-- TÍTULO (obligatorio) -->
+                                                        <div class="form-floating">
+                                                            <!-- required = el navegador no deja enviar el formulario si está vacío -->
+                                                            <!-- maxlength="100" = límite caracteres -->
+                                                            <input type="text" class="form-control" id="tituloTarea"
+                                                                maxlength="100" placeholder=" " required>
+                                                            <label for="tituloTarea">Título de la tarea <span
+                                                                    class="text-danger">*</span></label>
+                                                            <!-- Contador: position-absolute lo ubica arriba a la derecha DENTRO del campo -->
+                                                            <!-- z-3 = queda por encima del label. pe-none = no estorba al hacer clic en el campo -->
+                                                            <!-- Por ahora es texto fijo, JS lo actualizará (0/100, 1/100...) -->
+                                                            <span
+                                                                class="position-absolute top-0 end-0 pt-2 pe-3 small text-secondary z-3 pe-none"
+                                                                aria-hidden="true">0/100</span>
+                                                        </div>
+
+                                                        <!-- NOTAS (opcional) -->
+                                                        <div class="form-floating flex-grow-1 d-flex">
+                                                            <textarea class="form-control h-auto" id="notasTarea"
+                                                                maxlength="250" placeholder=" "></textarea>
+                                                            <label for="notasTarea">Notas (opcional)</label>
+                                                            <span
+                                                                class="position-absolute top-0 end-0 pt-2 pe-3 small text-secondary z-3 pe-none"
+                                                                aria-hidden="true">0/250</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- LADO DERECHO: campos y botón -->
+                                                    <div class="col-12 col-lg-6 d-flex flex-column flex-lg-row gap-2">
+
+                                                        <div class="flex-grow-1 d-flex flex-column gap-2">
+
+                                                            <!-- FILA 1: fecha (obligatoria) y hora -->
+                                                            <div class="row g-2">
+                                                                <div class="col-6">
+                                                                    <div class="form-floating">
+                                                                        <input type="date" class="form-control"
+                                                                            id="fechaTarea" placeholder=" " required>
+                                                                        <label for="fechaTarea">Fecha <span
+                                                                                class="text-danger">*</span></label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <div class="form-floating">
+                                                                        <input type="time" class="form-control"
+                                                                            id="horaTarea" placeholder=" ">
+                                                                        <label for="horaTarea">Hora</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- FILA 2: categoría y prioridad -->
+                                                            <div class="row g-2 flex-grow-1">
+                                                                <div class="col-6 d-flex">
+                                                                    <div class="form-floating flex-grow-1 d-flex">
+                                                                        <select class="form-select h-auto"
+                                                                            id="categoriaTarea">
+                                                                            <option value="" selected></option>
+                                                                            <option value="trabajo">Trabajo</option>
+                                                                            <option value="personal">Personal</option>
+                                                                            <option value="estudio">Estudio</option>
+                                                                            <option value="salud">Salud</option>
+                                                                            <option value="ocio">Ocio</option>
+                                                                        </select>
+                                                                        <label for="categoriaTarea">Categoría</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-6 d-flex">
+                                                                    <div class="form-floating flex-grow-1 d-flex">
+                                                                        <select class="form-select h-auto"
+                                                                            id="prioridadTarea">
+                                                                            <option value="" selected></option>
+                                                                            <option value="alta">Alta</option>
+                                                                            <option value="media">Media</option>
+                                                                            <option value="baja">Baja</option>
+                                                                        </select>
+                                                                        <label for="prioridadTarea">Prioridad</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- BOTÓN GUARDAR -->
+                                                        <div class="d-grid d-lg-block align-self-lg-end">
+                                                            <button type="submit"
+                                                                class="btn btn-primary px-4">Guardar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- ///// 4. LISTA DE TAREAS ///// -->
+                                <section class="mb-0" aria-labelledby="titulo-lista">
+                                    <div class="card">
+                                        <div class="card-body">
+
+                                            <!-- Encabezado: título a la izquierda y filtros a la derecha (en celular se apilan) -->
+                                            <!-- flex-wrap = si no caben en una línea, bajan. gap-3 = separación entre ellos -->
+                                            <div
+                                                class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+
+                                                <h2 id="titulo-lista" class="h6 fw-bold mb-0">
+                                                    <i class="bi bi-list-check text-primary me-2"
+                                                        aria-hidden="true"></i>Lista de tareas
+                                                </h2>
+
+                                                <!-- FILTROS: Todas / Pendientes / Completadas -->
+                                                <!-- nav-pills = botones con forma de "píldora". el que lleva "active" es el seleccionado -->
+                                                <!-- Por ahora no filtran nada -->
+                                                <div class="nav nav-pills small" role="group"
+                                                    aria-label="Filtrar tareas">
+                                                    <button type="button" class="nav-link active">Todas</button>
+                                                    <button type="button" class="nav-link">Pendientes</button>
+                                                    <button type="button" class="nav-link">Completadas</button>
+                                                </div>
+                                            </div>
+
+                                            <!-- CONTENEDOR DE LAS TAREAS -->
+                                            <!-- Aquí irán las tarjetas -->
+                                            <!-- <ul> con list-unstyled = lista sin viñetas; cada tarjeta será un <li> -->
+                                            <ul id="listaTareas" class="list-unstyled d-flex flex-column gap-2 mb-0">
+                                                <!-- tarjetas de tarea -->
+                                                <li
+                                                    class="bg-body-secondary border rounded text-center text-secondary py-5">
+                                                    Lista de tareas
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </section>
+
+                            </div>
+
+                            <!-- ///// OTRAS VISTAS DEL MENÚ (por ahora vacías) ///// -->
+                            <div class="tab-pane fade" id="vistaMiDia" role="tabpanel" aria-labelledby="tab-midia"
+                                tabindex="0"></div>
+                            <div class="tab-pane fade" id="vistaCalendario" role="tabpanel"
+                                aria-labelledby="tab-calendario" tabindex="0"></div>
+                            <div class="tab-pane fade" id="vistaTodasTareas" role="tabpanel" aria-labelledby="tab-todas"
+                                tabindex="0"></div>
+                            <div class="tab-pane fade" id="vistaPersonalizar" role="tabpanel"
+                                aria-labelledby="tab-personalizar" tabindex="0"></div>
+
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- JS de Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <!-- JS propio -->
+</body>
+
+</html>
