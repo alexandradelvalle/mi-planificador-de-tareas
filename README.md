@@ -107,6 +107,7 @@ Proyecto desarrollado como parte del proceso de aprendizaje y aplicación de con
 |---|---|
 | 🎨 Wireframe en Figma | [Ver diseño](https://www.figma.com/design/NBAKDwSuG5ZOcDr4xcTF5g/Planificador-de-tareas?m=auto&t=jQvvDn0rsY7660Cd-1) |
 | 📌 Tablero en Trello | [Ver tablero](https://trello.com/b/oPjosCUa/planificador-de-tareas-%F0%96%B9%AD) |
+| 🚀 Planificador web | [Ver demo](https://alexandradelvalle.github.io/mi-planificador-de-tareas/) |
 
 ---
 
