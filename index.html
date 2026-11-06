@@ -24,8 +24,8 @@
 
         <!-- ///// MENÚ LATERAL ///// -->
         <!-- Inicia CERRADO (sin la clase "show") para que primero se vea el botón de hamburguesa en el header -->
-        <nav id="menuLateral" class="collapse collapse-horizontal bg-white border-end p-3" style="width: 260px;"
-            aria-label="Menú principal">
+        <nav id="menuLateral" class="collapse collapse-horizontal flex-shrink-0 bg-white border-end p-3"
+            style="width: 260px;" aria-label="Menú principal">
             <!-- Contenedor interno fijo para evitar saltos de texto durante la animación -->
             <div class="d-flex flex-column h-100" style="width: 226px;">
 
@@ -35,9 +35,9 @@
                     <button
                         class="btn btn-sm bg-transparent text-secondary p-1 d-flex align-items-center justify-content-center border-0"
                         type="button" data-bs-toggle="collapse"
-                        data-bs-target="#menuLateral, #contenedorBotonHamburguesa, #espaciadorMain"
-                        aria-expanded="false" aria-controls="menuLateral contenedorBotonHamburguesa espaciadorMain"
-                        title="Cerrar menú" aria-label="Cerrar menú">
+                        data-bs-target="#menuLateral, #contenedorBotonHamburguesa, #espaciadorMain" aria-expanded="true"
+                        aria-controls="menuLateral contenedorBotonHamburguesa espaciadorMain" title="Cerrar menú"
+                        aria-label="Cerrar menú">
                         <i class="bi bi-layout-sidebar fs-5"></i>
                     </button>
 
@@ -95,7 +95,7 @@
         </nav>
 
         <!-- Contenedor de contenido de la vista principal -->
-        <div class="flex-grow-1 d-flex flex-column overflow-x-hidden">
+        <div class="flex-grow-1 d-flex flex-column overflow-hidden">
 
             <!-- ///// ENCABEZADO (HEADER) ///// -->
             <header class="navbar navbar-expand bg-white border-bottom px-4 py-3">
@@ -105,13 +105,13 @@
 
                         <!-- CONTENEDOR DEL BOTÓN HAMBURGUESA EXTERNO -->
                         <!-- Inicia VISIBLE (con la clase "show") porque el menú empieza cerrado -->
-                        <div id="contenedorBotonHamburguesa" class="collapse collapse-horizontal show">
+                        <div id="contenedorBotonHamburguesa" class="collapse collapse-horizontal show flex-shrink-0">
                             <!-- BOTÓN EXTERNO: Al presionarlo, abre el menú y oculta este mismo contenedor -->
                             <button
                                 class="btn btn-sm bg-transparent text-secondary p-1 d-flex align-items-center justify-content-center border-0"
                                 type="button" data-bs-toggle="collapse"
                                 data-bs-target="#menuLateral, #contenedorBotonHamburguesa, #espaciadorMain"
-                                aria-expanded="true"
+                                aria-expanded="false"
                                 aria-controls="menuLateral contenedorBotonHamburguesa espaciadorMain" title="Abrir menú"
                                 aria-label="Abrir menú">
                                 <i class="bi bi-list fs-4"></i>
@@ -144,7 +144,7 @@
                 <div class="d-flex">
 
                     <!-- ESPACIADOR: se colapsa junto con el menú para que el contenido siga alineado con el logo -->
-                    <div id="espaciadorMain" class="collapse collapse-horizontal show" aria-hidden="true">
+                    <div id="espaciadorMain" class="collapse collapse-horizontal show flex-shrink-0" aria-hidden="true">
                         <div class="d-none d-md-block" style="width: 4rem"></div>
                     </div>
 
@@ -202,6 +202,7 @@
 
                                     </section>
 
+
                                     <!-- ///// TO-DO LIST DEL DÍA ///// -->
                                     <!-- NOTA: cuando el calendario sea real, igualar la altura de esta tarjeta con la del calendario -->
                                     <!-- col-lg-7 + el col-lg-5 del calendario = 12 columnas, quedan lado a lado en desktop -->
@@ -216,95 +217,31 @@
                                                             aria-hidden="true"></i>To-do-list del día
                                                     </h2>
                                                     <!-- Contador: hechas / total. Después JS lo actualizará -->
-                                                    <span class="small text-secondary">3/5<span class="visually-hidden">
-                                                            tareas completadas</span></span>
+                                                    <span id="contadorTareasDia" class="small text-secondary">
+                                                        0/0
+                                                        <span class="visually-hidden">tareas completadas</span>
+                                                    </span>
+                                                </div>
+
+                                                <!-- Mensaje para cuando no hay tareas en el to-do -->
+                                                <div id="mensajeSinTareas"
+                                                    class="d-flex flex-column align-items-center justify-content-center text-center py-5">
+
+                                                    <i class="bi bi-calendar2-check fs-1 text-secondary mb-2"></i>
+
+                                                    <p class="mb-1 fw-medium">¡Tu día está esperando por ti!</p>
+
+                                                    <small class="text-secondary">
+                                                        Por ahora no tienes tareas pendientes para hoy.
+                                                    </small>
                                                 </div>
 
                                                 <!-- overflow-y-auto = aparece scroll vertical solo cuando el contenido no cabe -->
                                                 <!-- max-height limita hasta dónde crece la lista; después de eso, hace scroll -->
-                                                <ul class="list-group list-group-flush overflow-y-auto"
+                                                <ul id="listaTareasDia"
+                                                    class="list-group list-group-flush overflow-y-auto"
                                                     style="max-height: 250px;">
-
-                                                    <!-- TAREA COMPLETADA: el título lleva text-decoration-line-through (tachado) -->
-                                                    <li class="list-group-item d-flex align-items-center gap-3">
-                                                        <!-- Check -->
-                                                        <input class="form-check-input mt-0" type="checkbox" id="dia-1"
-                                                            checked>
-                                                        <!-- Hora -->
-                                                        <time class="small text-secondary" datetime="08:00">08:00</time>
-                                                        <!-- Círculo de prioridad: rojo = alta -->
-                                                        <span class="d-inline-block p-2 rounded-circle bg-danger">
-                                                            <span class="visually-hidden">Prioridad alta</span>
-                                                        </span>
-                                                        <!-- Título: flex-grow-1 lo estira y empuja la etiqueta a la derecha -->
-                                                        <label
-                                                            class="flex-grow-1 text-decoration-line-through text-secondary"
-                                                            for="dia-1">
-                                                            Meditar y hacer ejercicio
-                                                        </label>
-                                                        <!-- Etiqueta de categoría -->
-                                                        <span
-                                                            class="badge bg-success-subtle text-success-emphasis">Salud</span>
-                                                    </li>
-
-                                                    <li class="list-group-item d-flex align-items-center gap-3">
-                                                        <input class="form-check-input mt-0" type="checkbox" id="dia-2"
-                                                            checked>
-                                                        <time class="small text-secondary" datetime="10:00">10:00</time>
-                                                        <!-- amarillo = media -->
-                                                        <span class="d-inline-block p-2 rounded-circle bg-warning">
-                                                            <span class="visually-hidden">Prioridad media</span>
-                                                        </span>
-                                                        <label
-                                                            class="flex-grow-1 text-decoration-line-through text-secondary"
-                                                            for="dia-2">
-                                                            Clase de diseño web
-                                                        </label>
-                                                        <span
-                                                            class="badge bg-primary-subtle text-primary-emphasis">Estudio</span>
-                                                    </li>
-
-                                                    <li class="list-group-item d-flex align-items-center gap-3">
-                                                        <input class="form-check-input mt-0" type="checkbox" id="dia-3"
-                                                            checked>
-                                                        <time class="small text-secondary" datetime="12:30">12:30</time>
-                                                        <!-- verde = baja -->
-                                                        <span class="d-inline-block p-2 rounded-circle bg-success">
-                                                            <span class="visually-hidden">Prioridad baja</span>
-                                                        </span>
-                                                        <label
-                                                            class="flex-grow-1 text-decoration-line-through text-secondary"
-                                                            for="dia-3">
-                                                            Almuerzo con amigos
-                                                        </label>
-                                                        <span
-                                                            class="badge bg-secondary-subtle text-secondary-emphasis">Personal</span>
-                                                    </li>
-
-                                                    <!-- TAREAS PENDIENTES: sin "checked" y sin las clases de tachado -->
-                                                    <li class="list-group-item d-flex align-items-center gap-3">
-                                                        <input class="form-check-input mt-0" type="checkbox" id="dia-4">
-                                                        <time class="small text-secondary" datetime="15:00">15:00</time>
-                                                        <span class="d-inline-block p-2 rounded-circle bg-danger">
-                                                            <span class="visually-hidden">Prioridad alta</span>
-                                                        </span>
-                                                        <label class="flex-grow-1" for="dia-4">Estudiar
-                                                            JavaScript</label>
-                                                        <span
-                                                            class="badge bg-primary-subtle text-primary-emphasis">Estudio</span>
-                                                    </li>
-
-                                                    <li class="list-group-item d-flex align-items-center gap-3">
-                                                        <input class="form-check-input mt-0" type="checkbox" id="dia-5">
-                                                        <time class="small text-secondary" datetime="19:00">19:00</time>
-                                                        <span class="d-inline-block p-2 rounded-circle bg-success">
-                                                            <span class="visually-hidden">Prioridad baja</span>
-                                                        </span>
-                                                        <label class="flex-grow-1" for="dia-5">Leer un libro</label>
-                                                        <span
-                                                            class="badge bg-warning-subtle text-warning-emphasis">Ocio</span>
-                                                    </li>
-
+                                                    <!-- JavaScript agrega las tareas con fecha de hoy -->
                                                 </ul>
                                             </div>
                                         </div>
@@ -323,8 +260,19 @@
                                                     aria-hidden="true"></i>Agregar nueva tarea
                                             </h2>
 
+                                            <!-- ALERTA DE ERRORES -->
+                                            <!-- d-none = oculta al inicio. JS le quita d-none para mostrarla y se lo vuelve a poner para ocultarla -->
+                                            <div id="alertaFormulario" class="alert alert-danger d-none" role="alert">
+                                                <p class="fw-semibold mb-1">
+                                                    <i class="bi bi-exclamation-triangle-fill me-2"
+                                                        aria-hidden="true"></i>Revisa estos campos:
+                                                </p>
+                                                <!-- JS llena esta lista con los errores encontrados -->
+                                                <ul id="listaErrores" class="mb-0 small"></ul>
+                                            </div>
+
                                             <!-- FORMULARIO -->
-                                            <form id="formTarea">
+                                            <form id="formTarea" novalidate>
                                                 <div class="row g-2">
 
                                                     <!-- LADO IZQUIERDO: título y notas -->
@@ -340,9 +288,8 @@
                                                                     class="text-danger">*</span></label>
                                                             <!-- Contador: position-absolute lo ubica arriba a la derecha DENTRO del campo -->
                                                             <!-- z-3 = queda por encima del label. pe-none = no estorba al hacer clic en el campo -->
-                                                            <!-- Por ahora es texto fijo, JS lo actualizará (0/100, 1/100...) -->
-                                                            <span
-                                                                class="position-absolute top-0 end-0 pt-2 pe-3 small text-secondary z-3 pe-none"
+                                                            <span id="contadorTitulo"
+                                                                class="position-absolute top-0 end-0 pt-2 pe-4 small text-secondary z-3 pe-none"
                                                                 aria-hidden="true">0/100</span>
                                                         </div>
 
@@ -351,8 +298,8 @@
                                                             <textarea class="form-control h-auto" id="notasTarea"
                                                                 maxlength="250" placeholder=" "></textarea>
                                                             <label for="notasTarea">Notas (opcional)</label>
-                                                            <span
-                                                                class="position-absolute top-0 end-0 pt-2 pe-3 small text-secondary z-3 pe-none"
+                                                            <span id="contadorNotas"
+                                                                class="position-absolute top-0 end-0 pt-2 pe-4 small text-secondary z-3 pe-none"
                                                                 aria-hidden="true">0/250</span>
                                                         </div>
                                                     </div>
@@ -381,12 +328,12 @@
                                                                 </div>
                                                             </div>
 
-                                                            <!-- FILA 2: categoría y prioridad -->
+                                                            <!-- FILA 2: categoría y prioridad (obligatorias) -->
                                                             <div class="row g-2 flex-grow-1">
                                                                 <div class="col-6 d-flex">
                                                                     <div class="form-floating flex-grow-1 d-flex">
                                                                         <select class="form-select h-auto"
-                                                                            id="categoriaTarea">
+                                                                            id="categoriaTarea" required>
                                                                             <option value="" selected></option>
                                                                             <option value="trabajo">Trabajo</option>
                                                                             <option value="personal">Personal</option>
@@ -394,19 +341,21 @@
                                                                             <option value="salud">Salud</option>
                                                                             <option value="ocio">Ocio</option>
                                                                         </select>
-                                                                        <label for="categoriaTarea">Categoría</label>
+                                                                        <label for="categoriaTarea">Categoría <span
+                                                                                class="text-danger">*</span></label>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-6 d-flex">
                                                                     <div class="form-floating flex-grow-1 d-flex">
                                                                         <select class="form-select h-auto"
-                                                                            id="prioridadTarea">
+                                                                            id="prioridadTarea" required>
                                                                             <option value="" selected></option>
                                                                             <option value="alta">Alta</option>
                                                                             <option value="media">Media</option>
                                                                             <option value="baja">Baja</option>
                                                                         </select>
-                                                                        <label for="prioridadTarea">Prioridad</label>
+                                                                        <label for="prioridadTarea">Prioridad <span
+                                                                                class="text-danger">*</span></label>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -440,387 +389,74 @@
                                                 </h2>
 
                                                 <!-- FILTROS: Todas / Pendientes / Completadas -->
-                                                <!-- nav-pills = botones con forma de "píldora". el que lleva "active" es el seleccionado -->
-                                                <!-- Por ahora no filtran nada -->
                                                 <div class="nav nav-pills small" role="group"
                                                     aria-label="Filtrar tareas">
-                                                    <button type="button" class="nav-link active">Todas</button>
-                                                    <button type="button" class="nav-link">Pendientes</button>
-                                                    <button type="button" class="nav-link">Completadas</button>
+
+                                                    <button type="button" id="btnTodas" class="nav-link active">
+                                                        Todas
+                                                    </button>
+
+                                                    <button type="button" id="btnPendientes" class="nav-link">
+                                                        Pendientes
+                                                    </button>
+
+                                                    <button type="button" id="btnCompletadas" class="nav-link">
+                                                        Completadas
+                                                    </button>
+
                                                 </div>
-                                            </div>
 
-                                            <!-- CONTENEDOR DE LAS TAREAS -->
-                                            <!-- <ul> con list-unstyled = lista sin viñetas; cada tarjeta será un <li> -->
-                                            <div class="card border rounded-3">
-                                                <div class="card-body p-2">
+                                                <!-- CONTENEDOR DE LAS TAREAS -->
+                                                <!-- <ul> con list-unstyled = lista sin viñetas; cada tarjeta será un <li> -->
+                                                <div class="card border rounded-3">
+                                                    <div class="card-body p-2">
 
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover align-middle mb-0" style="table-layout: fixed; width: 100%; min-width: 1000px;">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-hover align-middle mb-0"
+                                                                style="table-layout: fixed; width: 100%; min-width: 1000px;">
 
-                                                            <colgroup>
-                                                                <col style="width: 3%"> <!-- check -->
-                                                                <col style="width: 20%"> <!-- tarea -->
-                                                                <col style="width: 25%"> <!-- descripción -->
-                                                                <col style="width: 15%"> <!-- fecha -->
-                                                                <col style="width: 11%"> <!-- hora -->
-                                                                <col style="width: 11%"> <!-- categoría -->
-                                                                <col style="width: 11%"> <!-- prioridad -->
-                                                                <col style="width: 7%"> <!-- botones -->
-                                                            </colgroup>
+                                                                <colgroup>
+                                                                    <col style="width: 3%"> <!-- check -->
+                                                                    <col style="width: 20%"> <!-- tarea -->
+                                                                    <col style="width: 25%"> <!-- descripción -->
+                                                                    <col style="width: 15%"> <!-- fecha -->
+                                                                    <col style="width: 11%"> <!-- hora -->
+                                                                    <col style="width: 11%"> <!-- categoría -->
+                                                                    <col style="width: 11%"> <!-- prioridad -->
+                                                                    <col style="width: 7%"> <!-- botones -->
+                                                                </colgroup>
 
-                                                            <thead>
-                                                                <tr class="text-start fs-6">
-                                                                    <th scope="col"></th>
-                                                                    <th scope="col" class="fw-normal">Tarea</th>
-                                                                    <th scope="col" class="fw-normal">Descripción</th>
-                                                                    <th scope="col" class="fw-normal text-nowrap">
-                                                                        <i class="bi bi-calendar-event me-1"></i>Fecha
-                                                                    </th>
-                                                                    <th scope="col" class="fw-normal">
-                                                                        <i class="bi bi-clock me-1"></i>Hora
-                                                                    </th>
-                                                                    <th scope="col" class="fw-normal">Categoría</th>
-                                                                    <th scope="col" class="fw-normal">Prioridad</th>
-                                                                    <th scope="col"></th>
-                                                                </tr>
-                                                            </thead>
+                                                                <thead>
+                                                                    <tr class="text-start fs-6">
+                                                                        <th scope="col"></th>
+                                                                        <th scope="col" class="fw-normal">Tarea</th>
+                                                                        <th scope="col" class="fw-normal">Descripción
+                                                                        </th>
+                                                                        <th scope="col" class="fw-normal text-nowrap">
+                                                                            <i
+                                                                                class="bi bi-calendar-event me-1"></i>Fecha
+                                                                        </th>
+                                                                        <th scope="col" class="fw-normal">
+                                                                            <i class="bi bi-clock me-1"></i>Hora
+                                                                        </th>
+                                                                        <th scope="col" class="fw-normal">Categoría</th>
+                                                                        <th scope="col" class="fw-normal">Prioridad</th>
+                                                                        <th scope="col"></th>
+                                                                    </tr>
+                                                                </thead>
 
-                                                            <tbody id="listaTareas" class="fs-6">
+                                                                <!-- CONTENIDO DE LA TABLA: Tareas -->
+                                                                <tbody id="listaTareas" class="fs-6">
+                                                                    <!-- Las tareas se agregan dinámicamente desde app.js -->
+                                                                </tbody>
 
-                                                                <!-- TAREA 1 -->
-                                                                <tr>
-                                                                    <td>
-                                                                        <input class="form-check-input" type="checkbox"
-                                                                            id="tarea-1"
-                                                                            aria-label="Completar Estudiar JavaScript">
-                                                                    </td>
+                                                            </table>
+                                                        </div>
 
-                                                                    <td class="text-start text-nowrap">
-                                                                        <label for="tarea-1" class="mb-0 fw-normal">
-                                                                            Estudiar JavaScript
-                                                                        </label>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span class="d-block text-truncate" 
-                                                                            title="Revisar conceptos de arrays y objetos"> <!-- TRUNCATE = evita el ajuste de línea automático -->
-                                                                            Revisar conceptos de arrays y objetos
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <i
-                                                                            class="bi bi-calendar-event me-1 text-secondary"></i>
-                                                                        <time datetime="2026-11-06">06 nov 2026</time>
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <i class="bi bi-clock me-1 text-secondary"></i>
-                                                                        <time datetime="15:00">15:00</time>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span
-                                                                            class="badge rounded-pill bg-primary-subtle text-primary-emphasis fw-normal">
-                                                                            Estudio
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span
-                                                                            class="badge rounded-pill bg-danger-subtle text-danger-emphasis fw-normal">
-                                                                            Alta
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <div
-                                                                            class="d-flex justify-content-center gap-2">
-                                                                            <button type="button"
-                                                                                class="btn btn-sm text-secondary"
-                                                                                aria-label="Editar tarea">
-                                                                                <i class="bi bi-pencil"></i>
-                                                                            </button>
-
-                                                                            <button type="button"
-                                                                                class="btn btn-sm text-secondary"
-                                                                                aria-label="Eliminar tarea">
-                                                                                <i class="bi bi-trash"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-
-                                                                <!-- TAREA 2 -->
-                                                                <tr>
-                                                                    <td>
-                                                                        <input class="form-check-input" type="checkbox"
-                                                                            id="tarea-2"
-                                                                            aria-label="Completar Comprar ingredientes">
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <label for="tarea-2" class="mb-0 fw-normal">
-                                                                            Comprar ingredientes
-                                                                        </label>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span class="d-block text-truncate"
-                                                                            title="Comprar frutas y verduras para la semana: manzana, pera, brocoli, lechuga, tomate">
-                                                                            Comprar frutas y verduras para la semana: manzana, pera, brocoli, lechuga, tomate
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <i
-                                                                            class="bi bi-calendar-event me-1 text-secondary"></i>
-                                                                        <time datetime="2026-11-07">07 nov 2026</time>
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <i class="bi bi-clock me-1 text-secondary"></i>
-                                                                        <time datetime="19:00">19:00</time>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span
-                                                                            class="badge rounded-pill bg-success-subtle text-success-emphasis fw-normal">
-                                                                            Salud
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span
-                                                                            class="badge rounded-pill bg-warning-subtle text-warning-emphasis fw-normal">
-                                                                            Media
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <div
-                                                                            class="d-flex justify-content-center gap-2">
-                                                                            <button type="button"
-                                                                                class="btn btn-sm text-secondary"
-                                                                                aria-label="Editar tarea">
-                                                                                <i class="bi bi-pencil"></i>
-                                                                            </button>
-
-                                                                            <button type="button"
-                                                                                class="btn btn-sm text-secondary"
-                                                                                aria-label="Eliminar tarea">
-                                                                                <i class="bi bi-trash"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-
-
-                                                                <!-- TAREA 3 -->
-                                                                <tr>
-                                                                    <td>
-                                                                        <input class="form-check-input" type="checkbox"
-                                                                            id="tarea-3"
-                                                                            aria-label="Completar Leer un libro">
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <label for="tarea-3" class="mb-0 fw-normal">
-                                                                            Leer un libro
-                                                                        </label>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span class="d-block text-truncate"
-                                                                            title="Continuar con el capítulo 4">
-                                                                            Continuar con el capítulo 4
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <i
-                                                                            class="bi bi-calendar-event me-1 text-secondary"></i>
-                                                                        <time datetime="2026-11-08">08 nov 2026</time>
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <i class="bi bi-clock me-1 text-secondary"></i>
-                                                                        <time datetime="20:00">20:00</time>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span
-                                                                            class="badge rounded-pill bg-warning-subtle text-warning-emphasis fw-normal">
-                                                                            Ocio
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span
-                                                                            class="badge rounded-pill bg-success-subtle text-success-emphasis fw-normal">
-                                                                            Baja
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <div
-                                                                            class="d-flex justify-content-center gap-2">
-                                                                            <button type="button"
-                                                                                class="btn btn-sm text-secondary"
-                                                                                aria-label="Editar tarea">
-                                                                                <i class="bi bi-pencil"></i>
-                                                                            </button>
-
-                                                                            <button type="button"
-                                                                                class="btn btn-sm text-secondary"
-                                                                                aria-label="Eliminar tarea">
-                                                                                <i class="bi bi-trash"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-
-
-                                                                <!-- TAREA 4 -->
-                                                                <tr>
-                                                                    <td>
-                                                                        <input class="form-check-input" type="checkbox"
-                                                                            id="tarea-4"
-                                                                            aria-label="Completar Llamar a mamá">
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <label for="tarea-4" class="mb-0 fw-normal">
-                                                                            Llamar a mamá
-                                                                        </label>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span class="d-block text-truncate"
-                                                                            title="Preguntar cómo estuvo su semana">
-                                                                            Preguntar cómo estuvo su semana
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <i
-                                                                            class="bi bi-calendar-event me-1 text-secondary"></i>
-                                                                        <time datetime="2026-11-09">09 nov 2026</time>
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <i class="bi bi-clock me-1 text-secondary"></i>
-                                                                        <time datetime="17:00">17:00</time>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span
-                                                                            class="badge rounded-pill bg-danger-subtle text-danger-emphasis fw-normal">
-                                                                            Personal
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span
-                                                                            class="badge rounded-pill bg-warning-subtle text-warning-emphasis fw-normal">
-                                                                            Media
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <div
-                                                                            class="d-flex justify-content-center gap-2">
-                                                                            <button type="button"
-                                                                                class="btn btn-sm text-secondary"
-                                                                                aria-label="Editar tarea">
-                                                                                <i class="bi bi-pencil"></i>
-                                                                            </button>
-
-                                                                            <button type="button"
-                                                                                class="btn btn-sm text-secondary"
-                                                                                aria-label="Eliminar tarea">
-                                                                                <i class="bi bi-trash"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-
-
-                                                                <!-- TAREA 5 -->
-                                                                <tr>
-                                                                    <td>
-                                                                        <input class="form-check-input" type="checkbox"
-                                                                            id="tarea-5"
-                                                                            aria-label="Completar Preparar presentación">
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <label for="tarea-5" class="mb-0 fw-normal">
-                                                                            Preparar presentación
-                                                                        </label>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span class="d-block text-truncate"
-                                                                            title="Organizar las diapositivas del proyecto">
-                                                                            Organizar las diapositivas del proyecto
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <i
-                                                                            class="bi bi-calendar-event me-1 text-secondary"></i>
-                                                                        <time datetime="2026-11-10">10 nov 2026</time>
-                                                                    </td>
-
-                                                                    <td class="text-start text-nowrap">
-                                                                        <i class="bi bi-clock me-1 text-secondary"></i>
-                                                                        <time datetime="08:00">08:00</time>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span
-                                                                            class="badge rounded-pill bg-primary-subtle text-primary-emphasis fw-normal">
-                                                                            Trabajo
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td class="text-start">
-                                                                        <span
-                                                                            class="badge rounded-pill bg-danger-subtle text-danger-emphasis fw-normal">
-                                                                            Alta
-                                                                        </span>
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <div
-                                                                            class="d-flex justify-content-center gap-2">
-                                                                            <button type="button"
-                                                                                class="btn btn-sm text-secondary"
-                                                                                aria-label="Editar tarea">
-                                                                                <i class="bi bi-pencil"></i>
-                                                                            </button>
-
-                                                                            <button type="button"
-                                                                                class="btn btn-sm text-secondary"
-                                                                                aria-label="Eliminar tarea">
-                                                                                <i class="bi bi-trash"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-
-
-
-                                                            </tbody>
-                                                        </table>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
                                 </section>
 
@@ -849,7 +485,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+    <!-- SweetAlert2 (alertas) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
     <!-- JS propio -->
+    <script src="js/app.js"></script>
 </body>
 
 </html>
