@@ -17,6 +17,12 @@ const mensajeSinTareas = document.querySelector('#mensajeSinTareas');
 const COLOR_PRINCIPAL = '#946580';
 const COLOR_TEXTO = '#57354D';
 
+// ---------- INSTANCIA DE TASKMANAGER ----------
+
+const taskManager = new TaskManager();
+
+console.log(taskManager.tasks);
+
 
 // ---------- TAREAS DE EJEMPLO ----------
 // Estas cinco tareas son estáticas y sirven para mostrar cómo se organiza la lista.
@@ -30,7 +36,8 @@ const tareas = [
         fecha: '2026-11-25',
         hora: '15:00',
         categoria: 'estudio',
-        prioridad: 'alta'
+        prioridad: 'alta',
+        completada: false
     },
     {
         id: 2,
@@ -39,7 +46,8 @@ const tareas = [
         fecha: '2026-11-07',
         hora: '19:00',
         categoria: 'salud',
-        prioridad: 'media'
+        prioridad: 'media',
+        completada: false
     },
     {
         id: 3,
@@ -48,7 +56,8 @@ const tareas = [
         fecha: '2026-11-08',
         hora: '20:00',
         categoria: 'ocio',
-        prioridad: 'baja'
+        prioridad: 'baja',
+        completada: false
     },
     {
         id: 4,
@@ -57,7 +66,8 @@ const tareas = [
         fecha: '2026-11-09',
         hora: '17:00',
         categoria: 'personal',
-        prioridad: 'media'
+        prioridad: 'media',
+        completada: false
     },
     {
         id: 5,
@@ -66,7 +76,8 @@ const tareas = [
         fecha: '2026-11-10',
         hora: '08:00',
         categoria: 'trabajo',
-        prioridad: 'alta'
+        prioridad: 'alta',
+        completada: false
     }
 ];
 
@@ -284,19 +295,22 @@ function crearFilaTarea(tarea) {
         '<time datetime="' + tarea.hora + '">' + tarea.hora + '</time>';
 
     return '' +
-        '<tr>' +
+        '<tr class="' +
+        (tarea.completada ? 'table-secondary text-secondary opacity-50' : '') +
+        '">' +
 
         '<td>' +
-        '<input class="form-check-input" type="checkbox" disabled ' +
+        '<input class="form-check-input" type="checkbox" ' +
+        (tarea.completada ? 'checked ' : '') +
         'id="tarea-' + tarea.id + '" ' +
+        'data-id="' + tarea.id + '" ' +
         'aria-label="Completar ' + titulo + '">' +
-        '</td>' +
 
         '<td class="text-start">' +
         '<label for="tarea-' + tarea.id +
-        '" class="d-block text-truncate mb-0 fw-normal" ' +
-        'title="' + titulo + '">' + titulo + '</label>' +
-        '</td>' +
+        '" class="d-block text-truncate mb-0 fw-normal ' +
+        (tarea.completada ? 'text-decoration-line-through' : '') +
+        '" title="' + titulo + '">' + titulo + '</label>' +
 
         '<td class="text-start">' + celdaNotas + '</td>' +
 
@@ -389,13 +403,15 @@ function renderTodoDia() {
             : tarea.hora;
 
         return `
-            <li class="list-group-item d-flex align-items-center flex-nowrap gap-3">
+            <li class="list-group-item d-flex align-items-center flex-nowrap gap-3
+            ${tarea.completada ? 'bg-body-secondary text-secondary opacity-50' : ''}">
 
                 <input
                     class="form-check-input mt-0"
                     type="checkbox"
-                    disabled
                     id="dia-${tarea.id}"
+                    data-id="${tarea.id}"
+                    ${tarea.completada ? 'checked' : ''}
                     aria-label="Completar ${titulo}"
                 >
 
@@ -413,7 +429,9 @@ function renderTodoDia() {
                 <label class="flex-grow-1 text-truncate"
                     style="min-width: 0;"
                     for="dia-${tarea.id}">
+                    <span class="${tarea.completada ? 'text-decoration-line-through' : ''}">
                     ${titulo}
+                    </span>
                 </label>
 
                 <span class="badge rounded-pill fw-normal ${COLOR_CATEGORIA[tarea.categoria]}">
@@ -425,6 +443,47 @@ function renderTodoDia() {
 
     }).join('');
 }
+
+// ---------- CAMBIAR ESTADO DE UNA TAREA ----------
+
+function cambiarEstadoTarea(id) {
+
+    // Buscar la tarea correspondiente al identificador
+    const tarea = tareas.find(function (tarea) {
+        return tarea.id === Number(id);
+    });
+
+    if (!tarea) {
+        return;
+    }
+
+    // Alternar entre completada y pendiente
+    tarea.completada = !tarea.completada;
+
+    // Actualizar ambas vistas para mantener el mismo estado
+    renderTareas();
+    renderTodoDia();
+}
+
+// ---------- EVENTOS DE LOS CHECKBOXES ----------
+
+// Detectar cambios en la lista general
+listaTareas.addEventListener('change', function (event) {
+
+    if (event.target.matches('input[type="checkbox"]')) {
+        cambiarEstadoTarea(event.target.dataset.id);
+    }
+
+});
+
+// Detectar cambios en el To-do-list del día
+listaTareasDia.addEventListener('change', function (event) {
+
+    if (event.target.matches('input[type="checkbox"]')) {
+        cambiarEstadoTarea(event.target.dataset.id);
+    }
+
+});
 
 
 // ---------- EVENTOS DEL FORMULARIO ----------
