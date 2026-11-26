@@ -68,6 +68,8 @@ Las tecnologías se incorporarán según los objetivos de cada sprint.
 | CSS3 | Estilos y presentación visual |
 | Bootstrap 5.3 | Diseño y componentes de interfaz |
 | JavaScript | Interactividad y manipulación del DOM |
+| localStorage | Persistencia de tareas en el navegador |
+| SweetAlert2 | Alertas y mensajes de interacción |
 | Java | Desarrollo del backend |
 | Spring Boot | Construcción de la aplicación del servidor |
 | SQL | Gestión y persistencia de datos |
@@ -75,20 +77,21 @@ Las tecnologías se incorporarán según los objetivos de cada sprint.
 
 ## 📁 Estructura del proyecto
 
-La estructura inicial del proyecto será:
-
-```text
-Planificador-Tareas/
+mi-planificador-de-tareas/
 ├── css/
 │   └── styles.css
+├── img/
+├── js/
+│   ├── index.js
+│   └── taskManager.js
 ├── index.html
 └── README.md
-```
-La estructura se ampliará conforme se incorporen nuevas funcionalidades.
 
 ## 📌 Estado del proyecto
 
-**Estado actual:** Sprint 1 · Planificación e implementación inicial de la interfaz.
+**Estado actual:** Sprint 2 — funcionalidades de gestión de tareas implementadas.
+
+Durante este sprint se incorporaron la clase TaskManager, el registro dinámico de tareas, la gestión de su estado, la eliminación y la persistencia de información mediante localStorage.
 
 Proyecto académico en desarrollo progresivo durante un bootcamp Full Stack.
 

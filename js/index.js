@@ -22,12 +22,6 @@ const COLOR_PRINCIPAL = '#946580';
 const COLOR_TEXTO = '#57354D';
 
 
-// ---------- INSTANCIA DE TASKMANAGER ----------
-
-// Los identificadores del 1 al 5 pertenecen a las tareas de ejemplo.
-const taskManager = new TaskManager(5);
-
-
 // ---------- TAREAS DE EJEMPLO ----------
 
 const tareasIniciales = [
@@ -84,10 +78,18 @@ const tareasIniciales = [
 ];
 
 
-// Obtener todas las tareas desde una única función.
+// ---------- INSTANCIA DE TASKMANAGER ----------
+
+// Los identificadores del 1 al 5 pertenecen a las tareas de ejemplo.
+const taskManager = new TaskManager(5, tareasIniciales);
+
+
+// ---------- OBTENER LAS TAREAS ----------
+
+// Obtener todas las tareas desde una única colección.
 function obtenerTareas() {
 
-    const tareasNuevas = taskManager.tasks.map(function (tarea) {
+    return taskManager.tasks.map(function (tarea) {
 
         return {
             id: tarea.id,
@@ -100,8 +102,6 @@ function obtenerTareas() {
             status: tarea.status
         };
     });
-
-    return tareasIniciales.concat(tareasNuevas);
 }
 
 
@@ -109,7 +109,7 @@ function obtenerTareas() {
 
 function getFormData() {
 
-    const data = {
+    return {
         titulo: tituloInput.value,
         notas: notasInput.value,
         fecha: fechaInput.value,
@@ -117,8 +117,6 @@ function getFormData() {
         categoria: categoriaSelect.value,
         prioridad: prioridadSelect.value
     };
-
-    return data;
 }
 
 
@@ -146,7 +144,6 @@ function validFormFieldInput(data) {
 
     const errores = [];
 
-    // trim() evita que los espacios se consideren como contenido.
     if (data.titulo.trim() === '') {
         errores.push({
             idCampo: 'tituloTarea',
@@ -176,12 +173,11 @@ function validFormFieldInput(data) {
     }
 
     // Notas y hora son opcionales.
-
     return errores;
 }
 
 
-// Comprueba si el formulario está completamente vacío.
+// Comprobar si el formulario está completamente vacío.
 function formularioVacio(data) {
 
     return Object.values(data).every(function (valor) {
@@ -248,7 +244,24 @@ function alertaTareaGuardada() {
 }
 
 
-// Marca en rojo los campos que contienen errores.
+// Confirmar que la tarea se eliminó correctamente.
+function alertaTareaEliminada() {
+
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Tarea eliminada',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        iconColor: COLOR_PRINCIPAL,
+        color: COLOR_TEXTO
+    });
+}
+
+
+// Marcar en rojo los campos que contienen errores.
 function marcarCamposInvalidos(errores) {
 
     errores.forEach(function (error) {
@@ -257,7 +270,7 @@ function marcarCamposInvalidos(errores) {
 }
 
 
-// Quita las marcas de error anteriores.
+// Quitar las marcas de error anteriores.
 function limpiarCamposInvalidos() {
 
     formTarea.querySelectorAll('.is-invalid').forEach(function (campo) {
@@ -300,17 +313,18 @@ const COLOR_PRIORIDAD = {
 };
 
 
-// Pone la primera letra en mayúscula.
+// Poner la primera letra en mayúscula.
 function capitalizar(texto) {
 
     return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
 
-// Convierte caracteres especiales en texto seguro.
+// Convertir caracteres especiales en texto seguro.
 function escapeHTML(texto) {
 
-    return String(texto).replace(/&/g, '&amp;')
+    return String(texto)
+        .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
@@ -318,7 +332,7 @@ function escapeHTML(texto) {
 }
 
 
-// Devuelve el HTML de una fila de la tabla.
+// Devolver el HTML de una fila de la tabla.
 function crearFilaTarea(tarea) {
 
     const titulo = escapeHTML(tarea.titulo);
@@ -339,8 +353,7 @@ function crearFilaTarea(tarea) {
         '<time datetime="' + tarea.hora + '">' + tarea.hora + '</time>';
 
     return '' +
-
-        '<tr class="' +
+        '<tr data-task-id="' + tarea.id + '" class="' +
         (completada ? 'table-secondary text-secondary opacity-50' : '') +
         '">' +
 
@@ -393,15 +406,17 @@ function crearFilaTarea(tarea) {
         '</span>' +
         '</td>' +
 
-        // Botones visuales.
+        // Botones de acciones.
         '<td>' +
-        '<div class="d-flex justify-content-center gap-2">' +
+        '<div class="d-flex justify-content-center gap-3">' +
 
-        '<button type="button" class="btn btn-sm text-secondary" aria-label="Editar tarea">' +
+        '<button type="button" class="btn btn-sm text-secondary p-0" ' +
+        'aria-label="Editar tarea">' +
         '<i class="bi bi-pencil"></i>' +
         '</button>' +
 
-        '<button type="button" class="btn btn-sm text-secondary" aria-label="Eliminar tarea">' +
+        '<button type="button" class="btn btn-sm text-secondary p-0 delete-button" ' +
+        'aria-label="Eliminar tarea">' +
         '<i class="bi bi-trash"></i>' +
         '</button>' +
 
@@ -452,7 +467,7 @@ function obtenerFechaHoy() {
 }
 
 
-// Dibuja las tareas que tienen fecha de hoy.
+// Dibujar las tareas que tienen fecha de hoy.
 function renderTodoDia() {
 
     const hoy = obtenerFechaHoy();
@@ -484,11 +499,7 @@ function renderTodoDia() {
     listaTareasDia.innerHTML = tareasDelDia.map(function (tarea) {
 
         const titulo = escapeHTML(tarea.titulo);
-
-        const hora = tarea.hora === ''
-            ? '—'
-            : tarea.hora;
-
+        const hora = tarea.hora === '' ? '—' : tarea.hora;
         const completada = tarea.status === 'COMPLETADA';
 
         return `
@@ -518,7 +529,6 @@ function renderTodoDia() {
                 <label class="flex-grow-1 text-truncate mb-0"
                     style="min-width: 0;"
                     for="dia-${tarea.id}">
-
                     <span class="${completada ? 'text-decoration-line-through' : ''}">
                         ${titulo}
                     </span>
@@ -527,7 +537,6 @@ function renderTodoDia() {
                 <span class="badge rounded-pill fw-normal ${COLOR_CATEGORIA[tarea.categoria]}">
                     ${capitalizar(tarea.categoria)}
                 </span>
-
             </li>
         `;
 
@@ -539,16 +548,10 @@ function renderTodoDia() {
 
 function cambiarEstadoTarea(id) {
 
-    // Buscar la tarea entre los ejemplos y las tareas registradas.
-    const tareaInicial = tareasIniciales.find(function (tarea) {
-        return tarea.id === Number(id);
+    // Buscar la tarea en la colección de TaskManager.
+    const tarea = taskManager.tasks.find(function (task) {
+        return task.id === Number(id);
     });
-
-    const tareaNueva = taskManager.tasks.find(function (tarea) {
-        return tarea.id === Number(id);
-    });
-
-    const tarea = tareaInicial || tareaNueva;
 
     if (!tarea) {
         return;
@@ -559,7 +562,8 @@ function cambiarEstadoTarea(id) {
         ? 'COMPLETADA'
         : 'PORHACER';
 
-    // Actualizar ambas vistas.
+    // Guardar el estado y actualizar ambas vistas.
+    taskManager.save();
     renderTareas();
     renderTodoDia();
 }
@@ -582,6 +586,44 @@ listaTareasDia.addEventListener('change', function (event) {
     if (event.target.matches('input[type="checkbox"]')) {
         cambiarEstadoTarea(event.target.dataset.id);
     }
+});
+
+
+// ---------- ELIMINAR TAREAS ----------
+
+// Detectar los clics en los botones de eliminar de la tabla.
+listaTareas.addEventListener('click', function (event) {
+
+    const botonEliminar = event.target.closest('.delete-button');
+
+    if (!botonEliminar) {
+        return;
+    }
+
+    // Obtener la fila que contiene la tarea seleccionada.
+    const parentTask = botonEliminar.closest('tr');
+
+    if (!parentTask) {
+        return;
+    }
+
+    // Recuperar el identificador de la tarea.
+    const taskId = Number(parentTask.dataset.taskId);
+
+    // Comprobar que el identificador sea válido.
+    if (!Number.isInteger(taskId)) {
+        return;
+    }
+
+    // Eliminar la tarea, guardar y actualizar las vistas.
+    taskManager.deleteTask(taskId);
+    taskManager.save();
+
+    renderTareas();
+    renderTodoDia();
+
+    // Mostrar confirmación.
+    alertaTareaEliminada();
 });
 
 
@@ -656,6 +698,9 @@ formTarea.addEventListener('submit', function (event) {
         }
     );
 
+    // Guardar las tareas registradas.
+    taskManager.save();
+
     // Mostrar las tareas actualizadas.
     renderTareas();
     renderTodoDia();
@@ -680,13 +725,15 @@ formTarea.addEventListener('submit', function (event) {
 });
 
 
+// ---------- LIMPIAR ERRORES DEL FORMULARIO ----------
+
 // Al corregir un campo se le quita el borde rojo.
 formTarea.addEventListener('input', function (event) {
     event.target.classList.remove('is-invalid');
 });
 
 
-// Quita el mensaje de error visual cuando el usuario cambia su valor.
+// Quitar el mensaje de error visual cuando el usuario cambia su valor.
 formTarea.addEventListener('change', function (event) {
     event.target.classList.remove('is-invalid');
 });
