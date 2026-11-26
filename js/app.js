@@ -6,27 +6,69 @@ const fechaInput = document.querySelector('#fechaTarea');
 const horaInput = document.querySelector('#horaTarea');
 const categoriaSelect = document.querySelector('#categoriaTarea');
 const prioridadSelect = document.querySelector('#prioridadTarea');
-const listaTareas = document.querySelector('#listaTareas'); // el <tbody>
+const listaTareas = document.querySelector('#listaTareas');
 const listaTareasDia = document.querySelector('#listaTareasDia');
 const contadorTareasDia = document.querySelector('#contadorTareasDia');
-const btnTodas = document.querySelector('#btnTodas');
-const btnPendientes = document.querySelector('#btnPendientes');
-const btnCompletadas = document.querySelector('#btnCompletadas');
 const contadorTitulo = document.querySelector('#contadorTitulo');
 const contadorNotas = document.querySelector('#contadorNotas');
 const mensajeSinTareas = document.querySelector('#mensajeSinTareas');
-
-// Filtro actual seleccionado
-let filtroActual = 'todas';
 
 // Colores de la paleta del planificador (para SweetAlert)
 const COLOR_PRINCIPAL = '#946580';
 const COLOR_TEXTO = '#57354D';
 
 
-// ---------- CAPTAR LOS DATOS DE FORMULARIO: Arreglo de tareas ----------
-const tareas = [];
-let siguienteId = 1;
+// ---------- TAREAS DE EJEMPLO ----------
+// Estas cinco tareas son estáticas y sirven para mostrar cómo se organiza la lista.
+// No se crean desde el formulario.
+
+const tareas = [
+    {
+        id: 1,
+        titulo: 'Estudiar JavaScript',
+        notas: 'Revisar conceptos de arrays y objetos',
+        fecha: '2026-11-25',
+        hora: '15:00',
+        categoria: 'estudio',
+        prioridad: 'alta'
+    },
+    {
+        id: 2,
+        titulo: 'Comprar ingredientes',
+        notas: 'Comprar frutas y verduras para la semana: manzana, pera, brocoli, lechuga, tomate',
+        fecha: '2026-11-07',
+        hora: '19:00',
+        categoria: 'salud',
+        prioridad: 'media'
+    },
+    {
+        id: 3,
+        titulo: 'Leer un libro',
+        notas: 'Continuar con el capítulo 4',
+        fecha: '2026-11-08',
+        hora: '20:00',
+        categoria: 'ocio',
+        prioridad: 'baja'
+    },
+    {
+        id: 4,
+        titulo: 'Llamar a mamá',
+        notas: 'Preguntar cómo estuvo su semana',
+        fecha: '2026-11-09',
+        hora: '17:00',
+        categoria: 'personal',
+        prioridad: 'media'
+    },
+    {
+        id: 5,
+        titulo: 'Preparar presentación',
+        notas: 'Organizar las diapositivas del proyecto',
+        fecha: '2026-11-10',
+        hora: '08:00',
+        categoria: 'trabajo',
+        prioridad: 'alta'
+    }
+];
 
 
 // ---------- LEER LOS DATOS DEL FORMULARIO ----------
@@ -39,10 +81,12 @@ function getFormData() {
         categoria: categoriaSelect.value,
         prioridad: prioridadSelect.value
     };
+
     return data;
 }
 
-// ---------- CONTADOR DE CARACTERES ----------
+
+// ---------- CONTADOR DE CARACTERES DEL FORMULARIO ----------
 function actualizarContador(input, contador, maximo) {
     const caracteres = input.value.length;
     contador.textContent = `${caracteres}/${maximo}`;
@@ -56,28 +100,46 @@ notasInput.addEventListener('input', function () {
     actualizarContador(notasInput, contadorNotas, 250);
 });
 
-// ---------- VALIDAR ----------
+
+// ---------- VALIDAR DATOS FORMULARIO ----------
 // Devuelve una lista de errores. Lista vacía = formulario válido.
 function validFormFieldInput(data) {
     const errores = [];
 
     // trim() quita espacios: "   " cuenta como vacío
     if (data.titulo.trim() === '') {
-        errores.push({ idCampo: 'tituloTarea', mensaje: 'Escribe un título para la tarea' });
+        errores.push({
+            idCampo: 'tituloTarea',
+            mensaje: 'Escribe un título para la tarea'
+        });
     }
+
     if (data.fecha === '') {
-        errores.push({ idCampo: 'fechaTarea', mensaje: 'Selecciona una fecha' });
+        errores.push({
+            idCampo: 'fechaTarea',
+            mensaje: 'Selecciona una fecha'
+        });
     }
+
     if (data.categoria === '') {
-        errores.push({ idCampo: 'categoriaTarea', mensaje: 'Elige una categoría' });
+        errores.push({
+            idCampo: 'categoriaTarea',
+            mensaje: 'Elige una categoría'
+        });
     }
+
     if (data.prioridad === '') {
-        errores.push({ idCampo: 'prioridadTarea', mensaje: 'Elige una prioridad' });
+        errores.push({
+            idCampo: 'prioridadTarea',
+            mensaje: 'Elige una prioridad'
+        });
     }
+
     // Notas y hora son opcionales: no se validan.
 
     return errores;
 }
+
 
 // Para cuando el usuario no escribió ni eligió nada
 function formularioVacio(data) {
@@ -86,7 +148,9 @@ function formularioVacio(data) {
     });
 }
 
+
 // ---------- ALERTAS (SweetAlert2) ----------
+
 // Caso 1: formulario vacío
 function alertaFormularioVacio() {
     return Swal.fire({
@@ -103,7 +167,7 @@ function alertaFormularioVacio() {
 
 // Caso 2: faltan datos -> lista lo que falta
 function alertaCamposIncompletos(errores) {
-    // Los mensajes son textos fijos nuestros (no del usuario), por eso es seguro usar html
+
     const items = errores.map(function (e) {
         return '<li>' + e.mensaje + '</li>';
     }).join('');
@@ -122,6 +186,7 @@ function alertaCamposIncompletos(errores) {
 }
 
 // Caso 3: tarea guardada -> aviso pequeño que no interrumpe
+// Se conserva para una tarea posterior, pero no se utiliza todavía.
 function alertaTareaGuardada() {
     Swal.fire({
         toast: true,
@@ -136,7 +201,7 @@ function alertaTareaGuardada() {
     });
 }
 
-// Marca en rojo los campos con error (apoyo visual junto a la alerta)
+// Marca en rojo los campos con error
 function marcarCamposInvalidos(errores) {
     errores.forEach(function (error) {
         document.getElementById(error.idCampo).classList.add('is-invalid');
@@ -149,15 +214,25 @@ function limpiarCamposInvalidos() {
     });
 }
 
+
 // ---------- PINTAR LAS TAREAS EN LA TABLA ----------
-// Convierte "2026-11-06" en "06 nov 2026" (sin new Date, para evitar errores de zona horaria)
-const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+// Convierte "2026-11-06" en "06 nov 2026"
+const MESES = [
+    'ene', 'feb', 'mar', 'abr', 'may', 'jun',
+    'jul', 'ago', 'sep', 'oct', 'nov', 'dic'
+];
+
 function formatearFecha(fechaISO) {
-    const partes = fechaISO.split('-'); // [año, mes, día]
-    return partes[2] + ' ' + MESES[Number(partes[1]) - 1] + ' ' + partes[0];
+    const partes = fechaISO.split('-');
+
+    return partes[2] + ' ' +
+        MESES[Number(partes[1]) - 1] + ' ' +
+        partes[0];
 }
 
-// Color de la etiqueta según la opción elegida (clases de Bootstrap)
+
+// Color de la etiqueta según la opción elegida
 const COLOR_CATEGORIA = {
     trabajo: 'bg-primary-subtle text-primary-emphasis',
     personal: 'bg-secondary-subtle text-secondary-emphasis',
@@ -165,18 +240,21 @@ const COLOR_CATEGORIA = {
     salud: 'bg-success-subtle text-success-emphasis',
     ocio: 'bg-warning-subtle text-warning-emphasis'
 };
+
 const COLOR_PRIORIDAD = {
     alta: 'bg-danger-subtle text-danger-emphasis',
     media: 'bg-warning-subtle text-warning-emphasis',
     baja: 'bg-success-subtle text-success-emphasis'
 };
 
-// Pone la primera letra en mayúscula: "estudio" -> "Estudio"
+
+// Pone la primera letra en mayúscula
 function capitalizar(texto) {
     return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
-// SEGURIDAD: el usuario puede escribir <, > o comillas. Esto las convierte en texto inofensivo
+
+// Convierte caracteres especiales en texto seguro
 function escapeHTML(texto) {
     return texto
         .replace(/&/g, '&amp;')
@@ -186,20 +264,18 @@ function escapeHTML(texto) {
         .replace(/'/g, '&#39;');
 }
 
+
 // Devuelve el HTML de UNA fila
 function crearFilaTarea(tarea) {
+
     const titulo = escapeHTML(tarea.titulo);
     const notas = escapeHTML(tarea.notas);
-
-    // Estilo del título cuando la tarea está completada
-    const claseTitulo = tarea.completada
-        ? 'text-decoration-line-through text-secondary'
-        : '';
 
     // Notas opcionales
     const celdaNotas = tarea.notas.trim() === ''
         ? '<span class="text-secondary">—</span>'
-        : '<span class="d-block text-truncate" title="' + notas + '">' + notas + '</span>';
+        : '<span class="d-block text-truncate" title="' +
+        notas + '">' + notas + '</span>';
 
     // Hora opcional
     const celdaHora = tarea.hora === ''
@@ -211,16 +287,15 @@ function crearFilaTarea(tarea) {
         '<tr>' +
 
         '<td>' +
-        '<input class="form-check-input" type="checkbox" data-id="' + tarea.id +
-        '" id="tarea-' + tarea.id + '" ' +
-        (tarea.completada ? 'checked' : '') +
-        ' aria-label="Completar ' + titulo + '">' +
+        '<input class="form-check-input" type="checkbox" disabled ' +
+        'id="tarea-' + tarea.id + '" ' +
+        'aria-label="Completar ' + titulo + '">' +
         '</td>' +
 
         '<td class="text-start">' +
         '<label for="tarea-' + tarea.id +
-        '" class="d-block text-truncate mb-0 fw-normal ' + claseTitulo +
-        '" title="' + titulo + '">' + titulo + '</label>' +
+        '" class="d-block text-truncate mb-0 fw-normal" ' +
+        'title="' + titulo + '">' + titulo + '</label>' +
         '</td>' +
 
         '<td class="text-start">' + celdaNotas + '</td>' +
@@ -256,25 +331,14 @@ function crearFilaTarea(tarea) {
         '</tr>';
 }
 
-// Dibuja las tareas del arreglo
+
+// Dibuja las cinco tareas de ejemplo en la tabla
 function renderTareas() {
-
-    let tareasFiltradas = tareas;
-
-    if (filtroActual === 'pendientes') {
-        tareasFiltradas = tareas.filter(function (tarea) {
-            return !tarea.completada;
-        });
-    }
-
-    if (filtroActual === 'completadas') {
-        tareasFiltradas = tareas.filter(function (tarea) {
-            return tarea.completada;
-        });
-    }
-
-    listaTareas.innerHTML = tareasFiltradas.map(crearFilaTarea).join('');
+    listaTareas.innerHTML = tareas.map(crearFilaTarea).join('');
 }
+
+
+// ---------- TO-DO-LIST DEL DÍA ----------
 
 // Obtener la fecha actual en formato YYYY-MM-DD
 function obtenerFechaHoy() {
@@ -286,8 +350,10 @@ function obtenerFechaHoy() {
     return anio + '-' + mes + '-' + dia;
 }
 
-// Dibujar las tareas que tienen fecha de hoy
+
+// Dibuja las tareas que tienen fecha de hoy
 function renderTodoDia() {
+
     const hoy = obtenerFechaHoy();
 
     const tareasDelDia = tareas.filter(function (tarea) {
@@ -306,12 +372,11 @@ function renderTodoDia() {
         completadas + '/' + tareasDelDia.length +
         '<span class="visually-hidden"> tareas completadas</span>';
 
-
     // Colores de los círculos según la prioridad
     const colorCirculo = {
         alta: 'bg-danger',
         media: 'bg-warning',
-        baja: 'bg-success',
+        baja: 'bg-success'
     };
 
     // Crear las filas del To-do-list
@@ -323,23 +388,19 @@ function renderTodoDia() {
             ? '—'
             : tarea.hora;
 
-        const claseTitulo = tarea.completada
-            ? 'text-decoration-line-through text-secondary'
-            : '';
-
         return `
             <li class="list-group-item d-flex align-items-center flex-nowrap gap-3">
 
                 <input
                     class="form-check-input mt-0"
                     type="checkbox"
-                    data-id="${tarea.id}"
+                    disabled
                     id="dia-${tarea.id}"
-                    ${tarea.completada ? 'checked' : ''}
                     aria-label="Completar ${titulo}"
                 >
 
-                <span class="small text-secondary flex-shrink-0 text-start" style="width: 3.5rem;">
+                <span class="small text-secondary flex-shrink-0 text-start"
+                    style="width: 3.5rem;">
                     ${hora || '&nbsp;'}
                 </span>
 
@@ -349,8 +410,9 @@ function renderTodoDia() {
                     </span>
                 </span>
 
-                <label class="flex-grow-1 text-truncate ${claseTitulo}" 
-                    style="min-width: 0;" for="dia-${tarea.id}">
+                <label class="flex-grow-1 text-truncate"
+                    style="min-width: 0;"
+                    for="dia-${tarea.id}">
                     ${titulo}
                 </label>
 
@@ -364,70 +426,11 @@ function renderTodoDia() {
     }).join('');
 }
 
-// ---------- AGREGAR UNA NUEVA TAREA ----------
-function agregarTarea(data) {
 
-    const tarea = {
-        id: siguienteId++,
-        titulo: data.titulo.trim(),
-        notas: data.notas.trim(),
-        fecha: data.fecha,
-        hora: data.hora,
-        categoria: data.categoria,
-        prioridad: data.prioridad,
-        completada: false
-    };
+// ---------- EVENTOS DEL FORMULARIO ----------
 
-    // Guardar la tarea en el arreglo
-    tareas.push(tarea);
-
-    // Actualizar las dos listas
-    renderTareas();
-    renderTodoDia();
-}
-
-// CHECKS DE LA LISTA GENERAL
-listaTareas.addEventListener('change', function (event) {
-
-    if (event.target.matches('input[type="checkbox"]')) {
-
-        const id = Number(event.target.dataset.id);
-
-        const tarea = tareas.find(function (t) {
-            return t.id === id;
-        });
-
-        if (tarea) {
-            tarea.completada = event.target.checked;
-
-            renderTareas();
-            renderTodoDia();
-        }
-    }
-});
-
-// CHECKS DEL TO-DO-LIST
-listaTareasDia.addEventListener('change', function (event) {
-
-    if (event.target.matches('input[type="checkbox"]')) {
-
-        const id = Number(event.target.dataset.id);
-
-        const tarea = tareas.find(function (t) {
-            return t.id === id;
-        });
-
-        if (tarea) {
-            tarea.completada = event.target.checked;
-
-            renderTareas();
-            renderTodoDia();
-        }
-    }
-});
-
-// ---------- EVENTOS ----------
 formTarea.addEventListener('submit', function (event) {
+
     event.preventDefault(); // evita que la página se recargue
 
     const data = getFormData();
@@ -436,10 +439,11 @@ formTarea.addEventListener('submit', function (event) {
     limpiarCamposInvalidos();
 
     if (errores.length === 0) {
-        // CASO 3: válido -> se pinta la tarea y se limpia el formulario
-        agregarTarea(data);
-        formTarea.reset();
-        alertaTareaGuardada();
+
+        // CASO 3: los datos son válidos.
+        // Se comprueba la información.
+        // Todavía no se agrega ninguna tarea a la lista.
+
         return;
     }
 
@@ -447,8 +451,8 @@ formTarea.addEventListener('submit', function (event) {
     marcarCamposInvalidos(errores);
 
     const alerta = formularioVacio(data)
-        ? alertaFormularioVacio()          // caso 1
-        : alertaCamposIncompletos(errores); // caso 2
+        ? alertaFormularioVacio()
+        : alertaCamposIncompletos(errores);
 
     // Al cerrar la alerta, el cursor va al primer campo con error
     alerta.then(function () {
@@ -456,52 +460,22 @@ formTarea.addEventListener('submit', function (event) {
     });
 });
 
+
 // Al corregir un campo se le quita el borde rojo
 formTarea.addEventListener('input', function (event) {
     event.target.classList.remove('is-invalid');
 });
-// Quita el mensaje de error visual de un campo cuando el usuario cambia su valor
+
+// Quita el mensaje de error visual cuando el usuario cambia su valor
 formTarea.addEventListener('change', function (event) {
     event.target.classList.remove('is-invalid');
 });
 
-// ---------- FILTROS ----------
-// FILTRO: TODAS
-btnTodas.addEventListener('click', function () {
-    filtroActual = 'todas';
-
-    btnTodas.classList.add('active');
-    btnPendientes.classList.remove('active');
-    btnCompletadas.classList.remove('active');
-
-    renderTareas();
-});
-
-// FILTRO: PENDIENTES
-btnPendientes.addEventListener('click', function () {
-    filtroActual = 'pendientes';
-
-    btnTodas.classList.remove('active');
-    btnPendientes.classList.add('active');
-    btnCompletadas.classList.remove('active');
-
-    renderTareas();
-});
-
-// FILTRO: COMPLETADAS
-btnCompletadas.addEventListener('click', function () {
-    filtroActual = 'completadas';
-
-    btnTodas.classList.remove('active');
-    btnPendientes.classList.remove('active');
-    btnCompletadas.classList.add('active');
-
-    renderTareas();
-});
-
 
 // ---------- AL CARGAR LA PÁGINA ----------
+
 renderTareas();
 renderTodoDia();
+
 actualizarContador(tituloInput, contadorTitulo, 100);
 actualizarContador(notasInput, contadorNotas, 250);
